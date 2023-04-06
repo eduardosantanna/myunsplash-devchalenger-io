@@ -8,4 +8,8 @@ export class CreateImageDto {
   @IsString()
   @IsNotEmpty()
   label: string
+
+  @IsString()
+  @IsNotEmpty()
+  passwordImage: string
 }

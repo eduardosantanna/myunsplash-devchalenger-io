@@ -15,6 +15,6 @@ export class ImageController {
   @Post()
   @UsePipes(ImageUrlValidatePipe)
   saveUrlImage(@Body() imageData: CreateImageDto) {
-    return this.imageService.saveUrlImage()
+    return this.imageService.saveUrlImage(imageData)
   }
 }
