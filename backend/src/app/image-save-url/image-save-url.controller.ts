@@ -13,7 +13,6 @@ import { ImageService } from './image-save-url.service'
 import { ImageUrlValidatePipe } from './validation-pipes/image-url-validate.pipe'
 import { CreateImageDto } from './dto/create-image.dto'
 import { DeleteImageDto } from './dto/delete-image.dto'
-import { IsMongoId } from 'class-validator'
 
 @Controller('image')
 export class ImageController {
