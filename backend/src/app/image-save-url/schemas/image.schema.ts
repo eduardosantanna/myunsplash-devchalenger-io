@@ -12,7 +12,7 @@ export class Image {
   @Prop({ required: true })
   label: string
 
-  @Prop({ required: true, select: false })
+  @Prop({ required: true })
   passwordImage: string
 }
 
