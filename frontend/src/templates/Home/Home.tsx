@@ -14,6 +14,8 @@ import {
 import * as NextImage from 'next/image'
 
 import logoDevChallenger from '../../../public/images/my_unsplash_logo.svg'
+import { useQuery } from '@tanstack/react-query'
+import { ImageService } from '@/services/api/ImageService/ImageService'
 
 const imagesUrls = [
   'https://images.unsplash.com/photo-1680724864797-d5559c80e6e5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNXx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=60',
@@ -26,6 +28,12 @@ const imagesUrls = [
 
 export const Home: React.FC = () => {
   const [isMinThan600] = useMediaQuery('(max-width: 600px)')
+  const { data, error } = useQuery({
+    queryKey: ['images'],
+    queryFn: ImageService.getImages,
+  })
+
+  console.log(data)
 
   return (
     <Container maxW="1243px">
