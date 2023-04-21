@@ -12,31 +12,30 @@ import {
   Text,
 } from '@chakra-ui/react'
 import * as NextImage from 'next/image'
+import { useQuery } from '@tanstack/react-query'
 
 import logoDevChallenger from '../../../public/images/my_unsplash_logo.svg'
-import { useQuery } from '@tanstack/react-query'
 import { ImageService } from '@/services/api/ImageService/ImageService'
-
-const imagesUrls = [
-  'https://images.unsplash.com/photo-1680724864797-d5559c80e6e5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNXx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=60',
-  'https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=400&q=60',
-  'https://images.unsplash.com/photo-1681148790059-a714eb72dcfe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=400&q=60',
-  'https://images.unsplash.com/photo-1661536373688-46a59b8669b9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-  'https://plus.unsplash.com/premium_photo-1670333351949-47f735fa9ba4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-  'https://images.unsplash.com/photo-1681488366683-2d3f96e7651a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyN3x8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-]
+import { useState } from 'react'
+import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
 
 export const Home: React.FC = () => {
   const [isMinThan600] = useMediaQuery('(max-width: 600px)')
-  const { data, error } = useQuery({
+  const [isOpen, setIsOpen] = useState(false)
+  const { data: imagesUrls, error } = useQuery({
     queryKey: ['images'],
     queryFn: ImageService.getImages,
   })
 
-  console.log(data)
-
   return (
     <Container maxW="1243px">
+      <AddImageModal
+        isOpen={isOpen}
+        onSubmit={() => console.log('Submit')}
+        onClose={() => setIsOpen(false)}
+        onCancel={() => setIsOpen(false)}
+      />
+
       {/* Header Component */}
       <Box as="header" paddingTop="32px" marginBottom={76}>
         <Flex flexWrap={isMinThan600 ? 'wrap' : 'nowrap'} gap="10px">
@@ -52,7 +51,11 @@ export const Home: React.FC = () => {
             />
           </InputGroup>
 
-          <Button colorScheme="green" minW={isMinThan600 ? 'full' : ''}>
+          <Button
+            onClick={() => setIsOpen(true)}
+            colorScheme="green"
+            minW={isMinThan600 ? 'full' : ''}
+          >
             Add a photo
           </Button>
         </Flex>
@@ -66,7 +69,7 @@ export const Home: React.FC = () => {
           columnGap: isMinThan600 ? 0 : 46,
         }}
       >
-        {imagesUrls.map((imageUrl) => (
+        {imagesUrls?.map((imageData) => (
           <Box
             key={Math.random()}
             marginBottom={46}
@@ -82,7 +85,7 @@ export const Home: React.FC = () => {
             <Image
               width="100%"
               alt="Image"
-              src={imageUrl}
+              src={imageData.imageUrl}
               cursor="pointer"
               _groupHover={{
                 filter: 'brightness(80%)',
@@ -90,22 +93,30 @@ export const Home: React.FC = () => {
               }}
             />
             <Text
+              display="none"
               position="absolute"
               fontSize={18}
               fontWeight={700}
               color="#FFF"
               bottom={5}
               left={5}
+              _groupHover={{
+                display: 'inline-block',
+              }}
             >
-              Olá
+              {imageData.label}
             </Text>
             <Button
+              display="none"
               position="absolute"
               variant="outline"
               colorScheme="red"
               size="xs"
               top={5}
               right={5}
+              _groupHover={{
+                display: 'inline-flex',
+              }}
             >
               delete
             </Button>

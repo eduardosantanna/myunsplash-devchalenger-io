@@ -15,9 +15,16 @@ import {
 interface IAddImageModalProps {
   isOpen: boolean
   onClose: () => void
+  onCancel: () => void
+  onSubmit: () => void
 }
 
-const AddImageModal: React.FC<IAddImageModalProps> = ({ isOpen, onClose }) => {
+const AddImageModal: React.FC<IAddImageModalProps> = ({
+  isOpen,
+  onClose,
+  onCancel,
+  onSubmit,
+}) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -36,10 +43,12 @@ const AddImageModal: React.FC<IAddImageModalProps> = ({ isOpen, onClose }) => {
           </FormControl>
         </ModalBody>
         <ModalFooter gap={2}>
-          <Button variant="ghost" colorScheme="red">
+          <Button onClick={onCancel} variant="ghost" colorScheme="red">
             Cancel
           </Button>
-          <Button colorScheme="green">Submit</Button>
+          <Button onClick={onSubmit} colorScheme="green">
+            Submit
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
