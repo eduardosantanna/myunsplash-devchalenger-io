@@ -31,7 +31,7 @@ export const Home: React.FC = () => {
     <Container maxW="1243px">
       <AddImageModal
         isOpen={isOpen}
-        onSubmit={() => console.log('Submit')}
+        onSubmit={() => setIsOpen(false)}
         onClose={() => setIsOpen(false)}
         onCancel={() => setIsOpen(false)}
       />

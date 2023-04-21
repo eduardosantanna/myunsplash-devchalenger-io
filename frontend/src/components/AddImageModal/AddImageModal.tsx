@@ -1,6 +1,7 @@
 import {
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -11,13 +12,8 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
-
-interface IAddImageModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onCancel: () => void
-  onSubmit: () => void
-}
+import { IAddImageModalProps } from './types'
+import { useImageForm } from './useImageForm'
 
 const AddImageModal: React.FC<IAddImageModalProps> = ({
   isOpen,
@@ -25,6 +21,10 @@ const AddImageModal: React.FC<IAddImageModalProps> = ({
   onCancel,
   onSubmit,
 }) => {
+  const { errors, register, handleSubmit, handleFormSubmit } = useImageForm({
+    onSubmit,
+  })
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -32,21 +32,25 @@ const AddImageModal: React.FC<IAddImageModalProps> = ({
         <ModalHeader>Add a new photo</ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDirection="column" gap={2}>
-          <FormControl>
-            <FormLabel>Label</FormLabel>
-            <Input />
-          </FormControl>
+          <form>
+            <FormControl isInvalid={!!errors.label}>
+              <FormLabel>Label</FormLabel>
+              <Input {...register('label')} />
+              <FormErrorMessage>{errors.label?.message}</FormErrorMessage>
+            </FormControl>
 
-          <FormControl>
-            <FormLabel>Photo URL</FormLabel>
-            <Input />
-          </FormControl>
+            <FormControl isInvalid={!!errors.imageUrl}>
+              <FormLabel>Photo URL</FormLabel>
+              <Input {...register('imageUrl')} />
+              <FormErrorMessage>{errors.imageUrl?.message}</FormErrorMessage>
+            </FormControl>
+          </form>
         </ModalBody>
         <ModalFooter gap={2}>
           <Button onClick={onCancel} variant="ghost" colorScheme="red">
             Cancel
           </Button>
-          <Button onClick={onSubmit} colorScheme="green">
+          <Button onClick={handleSubmit(handleFormSubmit)} colorScheme="green">
             Submit
           </Button>
         </ModalFooter>
