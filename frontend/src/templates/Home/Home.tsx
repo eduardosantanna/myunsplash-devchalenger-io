@@ -33,7 +33,6 @@ export const Home: React.FC = () => {
         isOpen={isOpen}
         onSubmit={() => setIsOpen(false)}
         onClose={() => setIsOpen(false)}
-        onCancel={() => setIsOpen(false)}
       />
 
       {/* Header Component */}

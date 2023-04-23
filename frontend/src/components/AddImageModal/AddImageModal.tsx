@@ -18,15 +18,20 @@ import { useImageForm } from './useImageForm'
 const AddImageModal: React.FC<IAddImageModalProps> = ({
   isOpen,
   onClose,
-  onCancel,
   onSubmit,
 }) => {
-  const { errors, register, handleSubmit, handleFormSubmit } = useImageForm({
-    onSubmit,
-  })
+  const { errors, register, handleSubmit, handleFormSubmit, reset } =
+    useImageForm({
+      onSubmit,
+    })
+
+  const onCloseModal = () => {
+    onClose()
+    reset()
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onCloseModal}>
       <ModalOverlay />
       <ModalContent mx={4}>
         <ModalHeader>Add a new photo</ModalHeader>
@@ -44,10 +49,18 @@ const AddImageModal: React.FC<IAddImageModalProps> = ({
               <Input {...register('imageUrl')} />
               <FormErrorMessage>{errors.imageUrl?.message}</FormErrorMessage>
             </FormControl>
+
+            <FormControl isInvalid={!!errors.passwordImage}>
+              <FormLabel>Password Image</FormLabel>
+              <Input type="password" {...register('passwordImage')} />
+              <FormErrorMessage>
+                {errors.passwordImage?.message}
+              </FormErrorMessage>
+            </FormControl>
           </form>
         </ModalBody>
         <ModalFooter gap={2}>
-          <Button onClick={onCancel} variant="ghost" colorScheme="red">
+          <Button onClick={onCloseModal} variant="ghost" colorScheme="red">
             Cancel
           </Button>
           <Button onClick={handleSubmit(handleFormSubmit)} colorScheme="green">
