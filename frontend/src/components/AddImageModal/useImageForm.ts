@@ -14,7 +14,6 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
     register,
     formState: { errors },
     reset,
-    unregister,
   } = useForm<FormProps>({
     criteriaMode: 'all',
     mode: 'all',

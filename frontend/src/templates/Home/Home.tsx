@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   Image,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 import * as NextImage from 'next/image'
 import { useQuery } from '@tanstack/react-query'
@@ -18,10 +19,18 @@ import logoDevChallenger from '../../../public/images/my_unsplash_logo.svg'
 import { ImageService } from '@/services/api/ImageService/ImageService'
 import { useState } from 'react'
 import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
+import { RemoveImageModal } from '@/components/RemoveImageModal/RemoveImageModal'
 
 export const Home: React.FC = () => {
   const [isMinThan600] = useMediaQuery('(max-width: 600px)')
   const [isOpen, setIsOpen] = useState(false)
+  const {
+    isOpen: isOpenDeleteImageModal,
+    onOpen: onOpenDeleteImageModal,
+    onClose: onCloseDeleteImageModal,
+  } = useDisclosure()
+  const [imageIdForDelete, setImageIdForDelete] = useState('')
+
   const { data: imagesUrls, error } = useQuery({
     queryKey: ['images'],
     queryFn: ImageService.getImages,
@@ -33,6 +42,12 @@ export const Home: React.FC = () => {
         isOpen={isOpen}
         onSubmit={() => setIsOpen(false)}
         onClose={() => setIsOpen(false)}
+      />
+
+      <RemoveImageModal
+        isOpen={isOpenDeleteImageModal}
+        onClose={onCloseDeleteImageModal}
+        onDelete={onCloseDeleteImageModal}
       />
 
       {/* Header Component */}
@@ -116,6 +131,7 @@ export const Home: React.FC = () => {
               _groupHover={{
                 display: 'inline-flex',
               }}
+              onClick={onOpenDeleteImageModal}
             >
               delete
             </Button>
