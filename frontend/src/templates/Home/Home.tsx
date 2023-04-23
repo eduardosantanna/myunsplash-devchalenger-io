@@ -31,9 +31,10 @@ export const Home: React.FC = () => {
   } = useDisclosure()
   const [imageIdForDelete, setImageIdForDelete] = useState('')
 
-  const { data: imagesUrls, error } = useQuery({
+  const { data: imagesUrls } = useQuery({
     queryKey: ['images'],
     queryFn: ImageService.getImages,
+    cacheTime: 0,
   })
 
   return (
@@ -45,6 +46,7 @@ export const Home: React.FC = () => {
       />
 
       <RemoveImageModal
+        idImageForDelete={imageIdForDelete}
         isOpen={isOpenDeleteImageModal}
         onClose={onCloseDeleteImageModal}
         onDelete={onCloseDeleteImageModal}
@@ -131,7 +133,9 @@ export const Home: React.FC = () => {
               _groupHover={{
                 display: 'inline-flex',
               }}
-              onClick={onOpenDeleteImageModal}
+              onClick={() => (
+                onOpenDeleteImageModal(), setImageIdForDelete(imageData._id)
+              )}
             >
               delete
             </Button>

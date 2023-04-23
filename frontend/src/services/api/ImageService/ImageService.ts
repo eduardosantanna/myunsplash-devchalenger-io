@@ -11,4 +11,11 @@ export class ImageService {
     const { data } = await Api.post<{ id: string }>('/image', imageData)
     return data
   }
+
+  static async deleteImage({
+    _id,
+    passwordImage,
+  }: Pick<IImage, '_id' | 'passwordImage'>) {
+    await Api.delete(`/image/${_id}/${passwordImage}`)
+  }
 }

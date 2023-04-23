@@ -18,9 +18,10 @@ import { useRemoveImageForm } from './useRemoveImageForm'
 const RemoveImageModal: React.FC<IRemoveImageModalProps> = ({
   isOpen,
   onClose,
+  idImageForDelete,
 }) => {
   const { register, handleSubmit, handleSubmitForm, reset, errors } =
-    useRemoveImageForm()
+    useRemoveImageForm({ onDelete: onClose })
 
   const onCloseModal = () => {
     onClose()
@@ -49,7 +50,12 @@ const RemoveImageModal: React.FC<IRemoveImageModalProps> = ({
           <Button colorScheme="gray" variant="ghost" onClick={onCloseModal}>
             Cancel
           </Button>
-          <Button colorScheme="red" onClick={handleSubmit(handleSubmitForm)}>
+          <Button
+            colorScheme="red"
+            onClick={handleSubmit((data) =>
+              handleSubmitForm(data, idImageForDelete)
+            )}
+          >
             Delete
           </Button>
         </ModalFooter>
