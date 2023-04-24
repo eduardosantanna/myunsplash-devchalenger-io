@@ -4,6 +4,8 @@ import { FormDeleteImageProps } from './types'
 import { schemaFormDeleteImage } from './schema'
 import { useMutation } from '@tanstack/react-query'
 import { ImageService } from '@/services/api/ImageService/ImageService'
+import { useToast, ToastId } from '@chakra-ui/react'
+import { useRef } from 'react'
 
 interface IUseRemoveImageForm {
   onDelete: () => void
@@ -24,13 +26,44 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
     },
   })
 
-  const { mutate } = useMutation(ImageService.deleteImage)
+  const toast = useToast()
+  const toastIdRef = useRef<ToastId>()
+
+  const { mutate } = useMutation(ImageService.deleteImage, {
+    onSuccess: () => {
+      toast.update(toastIdRef.current!, {
+        description: 'Deleted image.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top-right',
+      })
+    },
+    onError: () => {
+      toast.update(toastIdRef.current!, {
+        description: 'Error deleting image.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+        position: 'top-right',
+      })
+    },
+  })
 
   const handleSubmitForm = (
     { passwordImage }: FormDeleteImageProps,
     imageIdForDelete: string
   ) => {
+    toastIdRef.current = toast({
+      description: 'Processing...',
+      status: 'loading',
+      duration: 4000,
+      isClosable: true,
+      position: 'top-right',
+    })
+
     mutate({ _id: imageIdForDelete, passwordImage })
+    reset()
     onDelete()
   }
 
