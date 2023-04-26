@@ -1,13 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
-import { useToast } from '@chakra-ui/react'
+import { ToastId, useToast } from '@chakra-ui/react'
 import { schemaForm } from './schema'
 import { FormProps, IUseImageFormProps } from './types'
 import { ImageService } from '@/services/api/ImageService/ImageService'
+import { useRef } from 'react'
 
 export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
   const toast = useToast()
+  const toastIdRef = useRef<ToastId>()
 
   const {
     handleSubmit,
@@ -25,9 +27,11 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
     },
   })
 
-  const { mutate } = useMutation(ImageService.createImage, {
+  const { mutate } = useMutation({
+    mutationKey: ['send-image'],
+    mutationFn: ImageService.createImage,
     onSuccess: () => {
-      toast({
+      toast.update(toastIdRef.current!, {
         title: 'Image sent.',
         description: 'Your image has been successfully uploaded to the server',
         status: 'success',
@@ -37,7 +41,7 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
       })
     },
     onError: () => {
-      toast({
+      toast.update(toastIdRef.current!, {
         title: 'Error',
         description: 'Failed to upload your image to the server',
         status: 'error',
@@ -49,6 +53,13 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
   })
 
   const handleFormSubmit = (data: FormProps) => {
+    toastIdRef.current = toast({
+      description: 'Processing submission...',
+      status: 'loading',
+      position: 'top-right',
+      duration: null,
+    })
+
     mutate(data)
     onSubmit?.()
     reset()

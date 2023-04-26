@@ -12,6 +12,9 @@ interface IUseRemoveImageForm {
 }
 
 export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
+  const toast = useToast()
+  const toastIdRef = useRef<ToastId>()
+
   const {
     register,
     reset,
@@ -25,9 +28,6 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
       passwordImage: '',
     },
   })
-
-  const toast = useToast()
-  const toastIdRef = useRef<ToastId>()
 
   const { mutate } = useMutation(ImageService.deleteImage, {
     onSuccess: () => {
@@ -57,9 +57,8 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
     toastIdRef.current = toast({
       description: 'Processing...',
       status: 'loading',
-      duration: 4000,
-      isClosable: true,
       position: 'top-right',
+      duration: null,
     })
 
     mutate({ _id: imageIdForDelete, passwordImage })
