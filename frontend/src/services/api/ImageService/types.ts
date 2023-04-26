@@ -5,8 +5,7 @@ export interface IImage {
   passwordImage: string
 }
 
-export type TImageDataCreate = {
-  imageUrl: string
-  label: string
-  passwordImage: string
+export interface IReponseImageApi {
+  totalPages: number
+  imagesUrls: IImage[]
 }

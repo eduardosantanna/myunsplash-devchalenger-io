@@ -1,13 +1,15 @@
 import { Api } from '../config'
-import { IImage, TImageDataCreate } from './types'
+import { IImage, IReponseImageApi } from './types'
 
 export class ImageService {
-  static async getImages() {
-    const { data } = await Api.get<IImage[]>('/image')
-    return data.reverse()
+  static async getImages({ pageParam = 1, like = '' }) {
+    const { data } = await Api.get<IReponseImageApi>(
+      `/image?limit=9&page=${pageParam}&like=${like}`
+    )
+    return data
   }
 
-  static async createImage(imageData: TImageDataCreate) {
+  static async createImage(imageData: Omit<IImage, '_id'>) {
     const { data } = await Api.post<{ id: string }>('/image', imageData)
     return data
   }

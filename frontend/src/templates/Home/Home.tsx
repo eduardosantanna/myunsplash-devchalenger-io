@@ -11,15 +11,19 @@ import {
   Image,
   Text,
   useDisclosure,
+  Center,
+  Progress,
 } from '@chakra-ui/react'
 import * as NextImage from 'next/image'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
 import logoDevChallenger from '../../../public/images/my_unsplash_logo.svg'
 import { ImageService } from '@/services/api/ImageService/ImageService'
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
 import { RemoveImageModal } from '@/components/RemoveImageModal/RemoveImageModal'
+import { useDebounce } from '../../hooks/useDebounce'
+import { IImage } from '@/services/api/ImageService/types'
 
 export const Home: React.FC = () => {
   const [isMinThan600] = useMediaQuery('(max-width: 600px)')
@@ -31,11 +35,26 @@ export const Home: React.FC = () => {
   } = useDisclosure()
   const [imageIdForDelete, setImageIdForDelete] = useState('')
 
-  const { data: imagesUrls } = useQuery({
-    queryKey: ['images'],
-    queryFn: ImageService.getImages,
-    cacheTime: 0,
-  })
+  const [searchImage, setSearchImage] = useState('')
+
+  const { debounce } = useDebounce(1000)
+
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ['images', searchImage],
+      queryFn: ({ pageParam = 1 }) =>
+        ImageService.getImages({ pageParam, like: searchImage }),
+      getNextPageParam: (lastPage, allPages) => {
+        return allPages.length < lastPage.totalPages
+          ? allPages.length + 1
+          : undefined
+      },
+    })
+
+  const imagesUrls = useMemo(() => {
+    const images = data?.pages.map((page) => page.imagesUrls)
+    return images?.reduce((acc, data) => [...acc, ...data], [])
+  }, [data])
 
   return (
     <Container maxW="1243px">
@@ -64,6 +83,9 @@ export const Home: React.FC = () => {
               maxW={isMinThan600 ? 'full' : '300px'}
               placeholder="Search by name"
               borderColor="#BDBDBD"
+              onChange={(event) =>
+                debounce(() => setSearchImage(event.target.value))
+              }
             />
           </InputGroup>
 
@@ -77,8 +99,17 @@ export const Home: React.FC = () => {
         </Flex>
       </Box>
 
+      {isLoading && <Progress size="xs" isIndeterminate colorScheme="green" />}
+      {imagesUrls?.length === 0 && (
+        <Center>
+          <Text fontSize="2xl" fontWeight="semibold">
+            No image found
+          </Text>
+        </Center>
+      )}
+
       <Box
-        marginBottom={76}
+        marginBottom={0}
         style={{
           columnCount: isMinThan600 ? 1 : 3,
           columnWidth: isMinThan600 ? '100%' : '33%',
@@ -142,6 +173,17 @@ export const Home: React.FC = () => {
           </Box>
         ))}
       </Box>
+      {!!imagesUrls?.length && (
+        <Center paddingY={10}>
+          <Button
+            isLoading={isFetchingNextPage}
+            isDisabled={!hasNextPage}
+            onClick={() => fetchNextPage()}
+          >
+            Load more
+          </Button>
+        </Center>
+      )}
     </Container>
   )
 }
