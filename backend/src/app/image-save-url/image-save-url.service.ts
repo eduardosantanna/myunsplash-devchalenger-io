@@ -20,6 +20,7 @@ export class ImageService {
       this.imageModel.countDocuments(),
       this.imageModel
         .find({ label: new RegExp(like, 'i') }, { passwordImage: false })
+        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit),
     ])
