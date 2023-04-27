@@ -1,15 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { schemaForm } from './schema'
 import { FormProps, IUseImageFormProps } from './types'
 import { ImageService } from '@/services/api/ImageService/ImageService'
 import { useRef } from 'react'
+import { useImagesStore } from '@/store/useImagesStore'
 
 export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
   const toast = useToast()
   const toastIdRef = useRef<ToastId>()
+  const queryClient = useQueryClient()
 
   const {
     handleSubmit,
@@ -27,6 +29,10 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
     },
   })
 
+  const {
+    actions: { addAllImage },
+  } = useImagesStore()
+
   const { mutate } = useMutation({
     mutationKey: ['send-image'],
     mutationFn: ImageService.createImage,
@@ -39,6 +45,8 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
         isClosable: true,
         position: 'top-right',
       })
+
+      queryClient.invalidateQueries({ queryKey: ['images'] })
     },
     onError: () => {
       toast.update(toastIdRef.current!, {
@@ -59,7 +67,6 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
       position: 'top-right',
       duration: null,
     })
-
     mutate(data)
     onSubmit?.()
     reset()

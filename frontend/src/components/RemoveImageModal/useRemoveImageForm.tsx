@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 import { ImageService } from '@/services/api/ImageService/ImageService'
 import { useToast, ToastId } from '@chakra-ui/react'
 import { useRef } from 'react'
+import { useImagesStore } from '@/store/useImagesStore'
 
 interface IUseRemoveImageForm {
   onDelete: () => void
@@ -28,6 +29,10 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
       passwordImage: '',
     },
   })
+
+  const {
+    actions: { removeImage },
+  } = useImagesStore()
 
   const { mutate } = useMutation(ImageService.deleteImage, {
     onSuccess: () => {
@@ -61,7 +66,15 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
       duration: null,
     })
 
-    mutate({ _id: imageIdForDelete, passwordImage })
+    mutate(
+      { _id: imageIdForDelete, passwordImage },
+      {
+        onSuccess: () => {
+          removeImage(imageIdForDelete)
+        },
+      }
+    )
+
     reset()
     onDelete()
   }

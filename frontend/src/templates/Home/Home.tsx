@@ -1,32 +1,26 @@
-import { SearchIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
   Container,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  useMediaQuery,
   Image,
   Text,
   useDisclosure,
   Center,
   Progress,
 } from '@chakra-ui/react'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 import { ImageService } from '@/services/api/ImageService/ImageService'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
 import { RemoveImageModal } from '@/components/RemoveImageModal/RemoveImageModal'
-import { useDebounce } from '../../hooks/useDebounce'
-import { IImage } from '@/services/api/ImageService/types'
 import { Header } from '@/components/Header/Header'
+import { useImagesStore } from '@/store/useImagesStore'
+
+import Masonry from 'react-masonry-css'
+import { useLogicHome } from './useLogicHome'
 
 export const Home: React.FC = () => {
-  const [isMinThan600] = useMediaQuery('(max-width: 600px)')
-
   const {
     isOpen: isOpenDeleteImageModal,
     onOpen: onOpenDeleteImageModal,
@@ -40,25 +34,16 @@ export const Home: React.FC = () => {
   } = useDisclosure()
 
   const [imageIdForDelete, setImageIdForDelete] = useState('')
+  const [searchImageFilter, setSearchImageFilter] = useState('')
 
-  const [searchImage, setSearchImage] = useState('')
-
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: ['images', searchImage],
-      queryFn: ({ pageParam = 1 }) =>
-        ImageService.getImages({ pageParam, like: searchImage }),
-      getNextPageParam: (lastPage, allPages) => {
-        return allPages.length < lastPage.totalPages
-          ? allPages.length + 1
-          : undefined
-      },
-    })
-
-  const imagesUrls = useMemo(() => {
-    const images = data?.pages.map((page) => page.imagesUrls)
-    return images?.reduce((acc, data) => [...acc, ...data], [])
-  }, [data])
+  const {
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    breakpointColumnsObj,
+    imagesUrls,
+    fetchNextPage,
+  } = useLogicHome({ searchImageFilter })
 
   return (
     <>
@@ -80,13 +65,13 @@ export const Home: React.FC = () => {
       <Container maxW="1243px">
         <Header
           onClickButtonAddAPhoto={onOpenAddImageModal}
-          onChangeInputSearch={(value) => setSearchImage(value)}
+          onChangeInputSearch={(value) => setSearchImageFilter(value)}
         />
 
         {isLoading && (
           <Progress size="xs" isIndeterminate colorScheme="green" />
         )}
-        {imagesUrls?.length === 0 && (
+        {imagesUrls?.length === 0 && !isLoading && (
           <Center>
             <Text fontSize="2xl" fontWeight="semibold">
               No image found
@@ -94,13 +79,10 @@ export const Home: React.FC = () => {
           </Center>
         )}
 
-        <Box
-          marginBottom={0}
-          style={{
-            columnCount: isMinThan600 ? 1 : 3,
-            columnWidth: isMinThan600 ? '100%' : '33%',
-            columnGap: isMinThan600 ? 0 : 46,
-          }}
+        <Masonry
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+          breakpointCols={breakpointColumnsObj}
         >
           {imagesUrls?.map((imageData) => (
             <Box
@@ -158,7 +140,8 @@ export const Home: React.FC = () => {
               </Button>
             </Box>
           ))}
-        </Box>
+        </Masonry>
+
         {!!imagesUrls?.length && (
           <Center paddingY={10}>
             <Button
