@@ -1,26 +1,24 @@
 import {
-  Box,
   Button,
   Container,
-  Image,
   Text,
   useDisclosure,
   Center,
   Progress,
 } from '@chakra-ui/react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import Masonry from 'react-masonry-css'
+import { useState } from 'react'
 
-import { ImageService } from '@/services/api/ImageService/ImageService'
-import { useEffect, useState } from 'react'
 import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
 import { RemoveImageModal } from '@/components/RemoveImageModal/RemoveImageModal'
 import { Header } from '@/components/Header/Header'
-import { useImagesStore } from '@/store/useImagesStore'
-
-import Masonry from 'react-masonry-css'
 import { useLogicHome } from './useLogicHome'
+import { CardImage } from '@/components/CardImage/CardImage'
 
 export const Home: React.FC = () => {
+  const [imageIdForDelete, setImageIdForDelete] = useState('')
+  const [searchImageFilter, setSearchImageFilter] = useState('')
+
   const {
     isOpen: isOpenDeleteImageModal,
     onOpen: onOpenDeleteImageModal,
@@ -32,9 +30,6 @@ export const Home: React.FC = () => {
     onOpen: onOpenAddImageModal,
     onClose: onCloseAddImageModal,
   } = useDisclosure()
-
-  const [imageIdForDelete, setImageIdForDelete] = useState('')
-  const [searchImageFilter, setSearchImageFilter] = useState('')
 
   const {
     isLoading,
@@ -79,68 +74,23 @@ export const Home: React.FC = () => {
           </Center>
         )}
 
-        <Masonry
-          className="my-masonry-grid"
-          columnClassName="my-masonry-grid_column"
-          breakpointCols={breakpointColumnsObj}
-        >
-          {imagesUrls?.map((imageData) => (
-            <Box
-              key={Math.random()}
-              marginBottom={46}
-              borderRadius={16}
-              overflow="hidden"
-              position="relative"
-              role="group"
-              _hover={{
-                transform: 'scale(1.05)',
-                transition: '200ms ease-in-out',
-              }}
-            >
-              <Image
-                width="100%"
-                alt="Image"
-                src={imageData.imageUrl}
-                cursor="pointer"
-                _groupHover={{
-                  filter: 'brightness(80%)',
-                  transition: '200ms ease-in-out',
-                }}
-              />
-              <Text
-                display="none"
-                position="absolute"
-                fontSize={18}
-                fontWeight={700}
-                color="#FFF"
-                bottom={5}
-                left={5}
-                _groupHover={{
-                  display: 'inline-block',
-                }}
-              >
-                {imageData.label}
-              </Text>
-              <Button
-                display="none"
-                position="absolute"
-                variant="outline"
-                colorScheme="red"
-                size="xs"
-                top={5}
-                right={5}
-                _groupHover={{
-                  display: 'inline-flex',
-                }}
-                onClick={() => (
-                  onOpenDeleteImageModal(), setImageIdForDelete(imageData._id)
+        {!isLoading && (
+          <Masonry
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column"
+            breakpointCols={breakpointColumnsObj}
+          >
+            {imagesUrls?.map((imageData) => (
+              <CardImage
+                key={Math.random()}
+                imageData={imageData}
+                onClickDeleteButton={() => (
+                  setImageIdForDelete(imageData._id), onOpenDeleteImageModal()
                 )}
-              >
-                delete
-              </Button>
-            </Box>
-          ))}
-        </Masonry>
+              />
+            ))}
+          </Masonry>
+        )}
 
         {!!imagesUrls?.length && (
           <Center paddingY={10}>
