@@ -9,11 +9,11 @@ import {
 import Masonry from 'react-masonry-css'
 import { useState } from 'react'
 
+import { useLogicHome } from './useLogicHome'
+import { Header } from '@/components/Header/Header'
+import { CardImage } from '@/components/CardImage/CardImage'
 import { AddImageModal } from '@/components/AddImageModal/AddImageModal'
 import { RemoveImageModal } from '@/components/RemoveImageModal/RemoveImageModal'
-import { Header } from '@/components/Header/Header'
-import { useLogicHome } from './useLogicHome'
-import { CardImage } from '@/components/CardImage/CardImage'
 
 export const Home: React.FC = () => {
   const [imageIdForDelete, setImageIdForDelete] = useState('')

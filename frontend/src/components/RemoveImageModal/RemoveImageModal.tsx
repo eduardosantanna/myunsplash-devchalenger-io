@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
+
 import { IRemoveImageModalProps } from './types'
 import { useRemoveImageForm } from './useRemoveImageForm'
 

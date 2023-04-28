@@ -1,5 +1,6 @@
-import { Home } from '@/templates/Home/Home'
 import Head from 'next/head'
+
+import { Home } from '@/templates/Home/Home'
 
 export default function HomeRoot() {
   return (

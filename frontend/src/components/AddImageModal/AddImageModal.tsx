@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
+
 import { IAddImageModalProps } from './types'
 import { useImageForm } from './useImageForm'
 

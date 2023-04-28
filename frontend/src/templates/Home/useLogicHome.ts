@@ -1,7 +1,8 @@
-import { ImageService } from '@/services/api/ImageService/ImageService'
-import { useImagesStore } from '@/store/useImagesStore'
-import { useInfiniteQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+
+import { useImagesStore } from '@/store/useImagesStore'
+import { ImageService } from '@/services/api/ImageService/ImageService'
 
 interface IUseLogicHomeProps {
   searchImageFilter: string

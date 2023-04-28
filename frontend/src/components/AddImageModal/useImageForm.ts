@@ -1,12 +1,12 @@
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ToastId, useToast } from '@chakra-ui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { schemaForm } from './schema'
 import { FormProps, IUseImageFormProps } from './types'
 import { ImageService } from '@/services/api/ImageService/ImageService'
-import { useRef } from 'react'
-import { useImagesStore } from '@/store/useImagesStore'
 
 export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
   const toast = useToast()
@@ -28,10 +28,6 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
       passwordImage: '',
     },
   })
-
-  const {
-    actions: { addAllImage },
-  } = useImagesStore()
 
   const { mutate } = useMutation({
     mutationKey: ['send-image'],

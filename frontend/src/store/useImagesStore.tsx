@@ -1,5 +1,6 @@
-import { IImage } from '@/services/api/ImageService/types'
 import { create } from 'zustand'
+
+import { IImage } from '@/services/api/ImageService/types'
 
 interface IUseImagesStoreState {
   state: {

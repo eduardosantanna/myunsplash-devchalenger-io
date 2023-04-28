@@ -1,10 +1,6 @@
-import { IImage } from '@/services/api/ImageService/types'
 import { Box, Button, Image, Text } from '@chakra-ui/react'
 
-interface ICardImageProps {
-  onClickDeleteButton: () => void
-  imageData: IImage
-}
+import { ICardImageProps } from './types'
 
 const CardImage: React.FC<ICardImageProps> = ({
   onClickDeleteButton,

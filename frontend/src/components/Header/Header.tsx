@@ -10,9 +10,9 @@ import {
 import Image from 'next/image'
 import { SearchIcon } from '@chakra-ui/icons'
 
+import { IHeaderProps } from './types'
 import { useDebounce } from '@/hooks/useDebounce'
 import logoDevChallenger from '../../../public/images/my_unsplash_logo.svg'
-import { IHeaderProps } from './types'
 
 const Header: React.FC<IHeaderProps> = ({
   onChangeInputSearch,
