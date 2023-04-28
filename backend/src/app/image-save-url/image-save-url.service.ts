@@ -16,13 +16,20 @@ export class ImageService {
   constructor(@InjectModel(Image.name) private imageModel: Model<Image>) {}
 
   async getUrlsImage({ limit = 9, page = 1, like = '' }: PaginationQueryDto) {
+    const countDocumentsPromise =
+      like === ''
+        ? this.imageModel.countDocuments()
+        : this.imageModel.countDocuments({ label: like })
+
+    const imageDataPromise = this.imageModel
+      .find({ label: new RegExp(like, 'i') }, { passwordImage: false })
+      .sort({ _id: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+
     const [count, imagesUrls] = await Promise.all([
-      this.imageModel.countDocuments(),
-      this.imageModel
-        .find({ label: new RegExp(like, 'i') }, { passwordImage: false })
-        .sort({ _id: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit),
+      countDocumentsPromise,
+      imageDataPromise,
     ])
 
     return { totalPages: Math.ceil(count / limit), imagesUrls }
