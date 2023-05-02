@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { compare } from 'bcrypt'
+import { storage } from 'firebase-admin'
+import { randomUUID } from 'crypto'
 
 import { Image } from './schemas/image.schema'
 import { CreateImageDto } from './dto/create-image.dto'
@@ -22,7 +24,10 @@ export class ImageService {
         : this.imageModel.countDocuments({ label: like })
 
     const imageDataPromise = this.imageModel
-      .find({ label: new RegExp(like, 'i') }, { passwordImage: false })
+      .find(
+        { label: new RegExp(like, 'i') },
+        { passwordImage: false, firebaseName: false }
+      )
       .sort({ _id: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -36,7 +41,18 @@ export class ImageService {
   }
 
   async saveUrlImage(imageData: CreateImageDto) {
-    const createdImage = await new this.imageModel(imageData).save()
+    const randomNameImage = randomUUID()
+    const imageSavedFirebase = storage().bucket().file(randomNameImage)
+    imageSavedFirebase.save(imageData.imageBuffer, {
+      metadata: { contentType: imageData.imageContentType },
+    })
+
+    const createdImage = await new this.imageModel({
+      imageUrl: imageSavedFirebase.publicUrl(),
+      label: imageData.label,
+      passwordImage: imageData.passwordImage,
+      firebaseName: randomNameImage,
+    }).save()
     return { id: createdImage.id }
   }
 
@@ -49,5 +65,6 @@ export class ImageService {
     )
     if (!verifyPasswordImage) throw new BadRequestException()
     await imageForDelete.deleteOne()
+    await storage().bucket().file(imageForDelete.firebaseName).delete()
   }
 }

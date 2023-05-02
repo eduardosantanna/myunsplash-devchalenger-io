@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator'
 
 export class CreateImageDto {
   @IsString()
@@ -12,4 +12,10 @@ export class CreateImageDto {
   @IsString()
   @IsNotEmpty()
   passwordImage: string
+
+  @IsOptional()
+  imageBuffer: Buffer
+
+  @IsOptional()
+  imageContentType: string
 }

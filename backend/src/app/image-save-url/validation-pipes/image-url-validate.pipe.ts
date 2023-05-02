@@ -9,10 +9,12 @@ import { CreateImageDto } from '../dto/create-image.dto'
 
 @Injectable()
 export class ImageUrlValidatePipe implements PipeTransform {
-  async transform(imageRequestData: CreateImageDto) {
+  async transform(imageContent: CreateImageDto) {
     try {
-      const imageResponse = await axios.get(imageRequestData.imageUrl)
-      const mimeType = imageResponse.headers['content-type'] as string
+      const { data, headers } = await axios.get(imageContent.imageUrl, {
+        responseType: 'arraybuffer',
+      })
+      const mimeType = headers['content-type'] as string
 
       if (!mimeType.match(/image\/(png|jpeg)$/)) {
         throw new HttpException(
@@ -21,8 +23,12 @@ export class ImageUrlValidatePipe implements PipeTransform {
         )
       }
 
-      return imageRequestData
+      imageContent.imageBuffer = data
+      imageContent.imageContentType = mimeType
+
+      return imageContent
     } catch (error) {
+      console.log(error)
       throw new HttpException(
         'Entered URL is not a PNG or JPEG type image.',
         HttpStatus.BAD_REQUEST

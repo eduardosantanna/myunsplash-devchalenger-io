@@ -14,6 +14,9 @@ export class Image {
 
   @Prop({ required: true })
   passwordImage: string
+
+  @Prop({ required: true })
+  firebaseName: string
 }
 
 export const ImageSchema = SchemaFactory.createForClass(Image)
