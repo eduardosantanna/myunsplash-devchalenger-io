@@ -43,7 +43,7 @@ export class ImageService {
   async saveUrlImage(imageData: CreateImageDto) {
     const randomNameImage = randomUUID()
     const imageSavedFirebase = storage().bucket().file(randomNameImage)
-    imageSavedFirebase.save(imageData.imageBuffer, {
+    await imageSavedFirebase.save(imageData.imageBuffer, {
       metadata: { contentType: imageData.imageContentType },
     })
 

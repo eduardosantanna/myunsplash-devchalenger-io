@@ -30,7 +30,7 @@ export class ImageUrlValidatePipe implements PipeTransform {
     } catch (error) {
       console.log(error)
       throw new HttpException(
-        'Entered URL is not a PNG or JPEG type image.',
+        { message: ['Entered URL is not a PNG or JPEG type image.'] },
         HttpStatus.BAD_REQUEST
       )
     }
