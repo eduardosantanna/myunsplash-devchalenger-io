@@ -1,12 +1,13 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { schemaForm } from './schema'
-import { FormProps, IUseImageFormProps } from './types'
+import { FormProps, IUseImageFormProps, TErrorResponse } from './types'
 import { ImageService } from '@/services/api/ImageService/ImageService'
+import { AxiosError } from 'axios'
 
 export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
   const toast = useToast()
@@ -44,10 +45,17 @@ export const useImageForm = ({ onSubmit }: IUseImageFormProps) => {
 
       queryClient.invalidateQueries({ queryKey: ['images'] })
     },
-    onError: () => {
+    onError: (error: TErrorResponse) => {
+      const errorMessages = error.response.data.message
+      const renderMessages = errorMessages.map((message) => (
+        <React.Fragment key={Math.random()}>
+          {message}
+          <br />
+        </React.Fragment>
+      ))
       toast.update(toastIdRef.current!, {
         title: 'Error',
-        description: 'Failed to upload your image to the server',
+        description: renderMessages,
         status: 'error',
         duration: 4000,
         isClosable: true,

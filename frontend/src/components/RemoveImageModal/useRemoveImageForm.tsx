@@ -1,10 +1,10 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { useToast, ToastId } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { FormDeleteImageProps } from './types'
+import { FormDeleteImageProps, TErrorResponse } from './types'
 import { schemaFormDeleteImage } from './schema'
 import { useImagesStore } from '@/store/useImagesStore'
 import { ImageService } from '@/services/api/ImageService/ImageService'
@@ -45,9 +45,17 @@ export const useRemoveImageForm = ({ onDelete }: IUseRemoveImageForm) => {
         position: 'top-right',
       })
     },
-    onError: () => {
+    onError: (error: TErrorResponse) => {
+      const errorMessages = error.response.data.message
+      const renderMessages = errorMessages.map((message) => (
+        <React.Fragment key={Math.random()}>
+          {message}
+          <br />
+        </React.Fragment>
+      ))
+
       toast.update(toastIdRef.current!, {
-        description: 'Error deleting image.',
+        description: renderMessages,
         status: 'error',
         duration: 4000,
         isClosable: true,
