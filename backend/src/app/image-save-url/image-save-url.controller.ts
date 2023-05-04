@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  BadGatewayException,
 } from '@nestjs/common'
 import { ImageService } from './image-save-url.service'
 import { ImageUrlValidatePipe } from './validation-pipes/image-url-validate.pipe'
@@ -22,18 +23,30 @@ export class ImageController {
 
   @Get()
   async index(@Query() paginationParams: PaginationQueryDto) {
-    return await this.imageService.getUrlsImage(paginationParams)
+    try {
+      return await this.imageService.getUrlsImage(paginationParams)
+    } catch (error) {
+      throw new BadGatewayException(['Internal error when fetching images.'])
+    }
   }
 
   @Post()
   @UsePipes(ImageUrlValidatePipe)
   async create(@Body() imageData: CreateImageDto) {
-    return await this.imageService.saveUrlImage(imageData)
+    try {
+      return await this.imageService.saveUrlImage(imageData)
+    } catch (error) {
+      throw new BadGatewayException(['Error saving image.'])
+    }
   }
 
   @Delete(':id/:passwordImage')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param() { id, passwordImage }: DeleteImageDto) {
-    return this.imageService.deleteImage(id, passwordImage)
+    try {
+      return this.imageService.deleteImage(id, passwordImage)
+    } catch (error) {
+      throw new BadGatewayException(['Error deleting image.'])
+    }
   }
 }

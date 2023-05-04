@@ -43,6 +43,7 @@ export class ImageService {
   async saveUrlImage(imageData: CreateImageDto) {
     const randomNameImage = randomUUID()
     const imageSavedFirebase = storage().bucket().file(randomNameImage)
+
     await imageSavedFirebase.save(imageData.imageBuffer, {
       metadata: { contentType: imageData.imageContentType },
     })
@@ -53,17 +54,19 @@ export class ImageService {
       passwordImage: imageData.passwordImage,
       firebaseName: randomNameImage,
     }).save()
+
     return { id: createdImage.id }
   }
 
   async deleteImage(id: string, passwordImage: string) {
     const imageForDelete = await this.imageModel.findById(id)
-    if (!imageForDelete) throw new NotFoundException()
+    if (!imageForDelete) throw new NotFoundException(['Not found image.'])
     const verifyPasswordImage = await compare(
       passwordImage,
       imageForDelete.passwordImage
     )
-    if (!verifyPasswordImage) throw new BadRequestException()
+    if (!verifyPasswordImage)
+      throw new BadRequestException(['Incorrect password.'])
     await imageForDelete.deleteOne()
     await storage().bucket().file(imageForDelete.firebaseName).delete()
   }
