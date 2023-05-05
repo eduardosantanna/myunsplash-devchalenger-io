@@ -41,7 +41,8 @@ const CardImage: React.FC<ICardImageProps> = ({
           display: 'inline-block',
         }}
       >
-        {imageData.label}
+        {imageData.label.charAt(0).toUpperCase() +
+          imageData.label.slice(1).toLowerCase()}
       </Text>
       <Button
         display="none"
