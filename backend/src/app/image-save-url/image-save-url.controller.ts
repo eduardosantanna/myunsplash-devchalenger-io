@@ -40,9 +40,9 @@ export class ImageController {
     }
   }
 
-  @Delete(':id/:passwordImage')
+  @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param() { id, passwordImage }: DeleteImageDto) {
+  delete(@Body() { id, passwordImage }: DeleteImageDto) {
     try {
       return this.imageService.deleteImage(id, passwordImage)
     } catch (error) {
