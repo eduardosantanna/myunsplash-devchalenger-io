@@ -18,6 +18,8 @@ export class ImageService {
     _id,
     passwordImage,
   }: Pick<IImage, '_id' | 'passwordImage'>) {
-    await Api.delete(`/image/${_id}/${passwordImage}`)
+    await Api.delete(`/image`, {
+      data: { id: _id, passwordImage },
+    })
   }
 }
