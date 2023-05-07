@@ -39,4 +39,5 @@ backend/!.vscode/extensions.json
 
 # .env File
 .env
+.env.local
 next-env.d.ts

@@ -3,20 +3,20 @@ _Read this in other languages:_ [Português](README.pt-br.md)
 <h1 align="center">My Unsplash</h1>
 
 <div align="center">
-   Solution for a challenge from  <a href="*" target="_blank">Devchallenges.io</a>.
+   Solution for a challenge from  <a href="https://devchallenges.io" target="_blank">Devchallenges.io</a>.
 </div>
 
 <div align="center">
   <h3>
-    <a href="*">
+    <a href="https://myunsplash-devchalenger-io.vercel.app">
       Demo
     </a>
     <span> | </span>
-    <a href="*">
+    <a href="https://github.com/eduardosantanna/myunsplash-devchalenger-io">
       Solution
     </a>
     <span> | </span>
-    <a href="*">
+    <a href="https://devchallenges.io/challenges/rYyhwJAxMfES5jNQ9YsP">
       Challenge
     </a>
   </h3>

@@ -1,20 +1,20 @@
 <h1 align="center">My Unsplash</h1>
 
 <div align="center">
-   Solução para um desafio do <a href="*" target="_blank">Devchallenges.io</a>.
+   Solução para um desafio do <a href="https://devchallenges.io" target="_blank">Devchallenges.io</a>.
 </div>
 
 <div align="center">
   <h3>
-    <a href="*">
+    <a href="https://myunsplash-devchalenger-io.vercel.app">
       Demo
     </a>
     <span> | </span>
-    <a href="*">
+    <a href="https://github.com/eduardosantanna/myunsplash-devchalenger-io">
       Solução
     </a>
     <span> | </span>
-    <a href="*">
+    <a href="https://devchallenges.io/challenges/rYyhwJAxMfES5jNQ9YsP">
       Desafio
     </a>
   </h3>
